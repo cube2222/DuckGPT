@@ -33,9 +33,9 @@ Please keep in mind that this will incur costs on your OpenAI account.
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
-		openaiToken := os.Getenv("GPTSQL_TOKEN")
+		openaiToken := os.Getenv("DUCKGPT_TOKEN")
 		if openaiToken == "" {
-			return fmt.Errorf("please provide your OpenAI platform token in the GPTSQL_TOKEN environment variable")
+			return fmt.Errorf("please provide your OpenAI platform token in the DUCKGPT_TOKEN environment variable")
 		}
 
 		inputReader := bufio.NewReader(os.Stdin)
