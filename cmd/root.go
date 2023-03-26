@@ -33,6 +33,11 @@ Please keep in mind that this will incur costs on your OpenAI account.
 	RunE: func(cmd *cobra.Command, args []string) error {
 		ctx := context.Background()
 
+		openaiToken := os.Getenv("GPTSQL_TOKEN")
+		if openaiToken == "" {
+			return fmt.Errorf("please provide your OpenAI platform token in the GPTSQL_TOKEN environment variable")
+		}
+
 		inputReader := bufio.NewReader(os.Stdin)
 
 		assistantInstructions := `You can respond with "SCHEMA <table_name>" to show the schema of a table. You can respond with "QUERY <query>" to execute the provided query and finish the exchange. Only respond with those predefined commands. Read the schema of any tables you want to use first. Always include the file extension in the table names, so table.json or table.csv, and then always alias the table with a custom name. Only send one command per message.`
@@ -80,10 +85,6 @@ Available tables: %s
 %s`, query, strings.Join(append(jsonFiles, csvFiles...), ", "), assistantInstructions),
 		})
 
-		openaiToken := os.Getenv("GPTSQL_TOKEN")
-		if openaiToken == "" {
-			return fmt.Errorf("please provide your OpenAI platform token in the GPTSQL_TOKEN environment variable")
-		}
 		openaiCli := openai.NewClient(openaiToken)
 
 		for i := 0; i < messageLimit; i++ {
