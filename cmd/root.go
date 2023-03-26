@@ -35,7 +35,7 @@ Please keep in mind that this will incur costs on your OpenAI account.
 
 		inputReader := bufio.NewReader(os.Stdin)
 
-		assistantInstructions := `You can respond with "SCHEMA <table_name>" to show the schema of a table. You can respond with "QUERY <query>" to execute the provided query and finish the exchange. Only respond with those predefined commands. Read the schema of any tables you want to use first. Always include the file extension in the table names, so table.json or table.csv, and then name the table with a custom name. Only send one command per message.`
+		assistantInstructions := `You can respond with "SCHEMA <table_name>" to show the schema of a table. You can respond with "QUERY <query>" to execute the provided query and finish the exchange. Only respond with those predefined commands. Read the schema of any tables you want to use first. Always include the file extension in the table names, so table.json or table.csv, and then always alias the table with a custom name. Only send one command per message.`
 
 		var messages []openai.ChatCompletionMessage
 		messages = append(messages, openai.ChatCompletionMessage{
@@ -152,6 +152,9 @@ Available tables: %s
 				color.Green("\nIs this satisfactory? If yes, please exit (or type 'exit'). If no, please specify the issue.")
 				line, err := inputReader.ReadString('\n')
 				if err != nil {
+					if err == io.EOF {
+						return nil
+					}
 					return fmt.Errorf("could not read input: %w", err)
 				}
 				line = strings.TrimSpace(line)
@@ -160,7 +163,7 @@ Available tables: %s
 				}
 				messages = append(messages, openai.ChatCompletionMessage{
 					Role:    "user",
-					Content: "Please retry with this additional constraint: " + line + "\n" + assistantInstructions,
+					Content: "Please retry with this additional constraint: " + line + "\n" + assistantInstructions + "\n" + "Do not apologize.",
 				})
 
 			default:
