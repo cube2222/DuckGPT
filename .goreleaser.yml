@@ -1,0 +1,28 @@
+project_name: duckgpt
+release:
+  draft: true
+builds:
+  - env: [CGO_ENABLED=0]
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    tags:
+      - purego
+    ldflags:
+      - "-s -w"
+brews:
+  - name: duckgpt
+    tap:
+      owner: "cube2222"
+      name: "homebrew-cube2222"
+      branch: main
+      token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
+    homepage: https://github.com/cube2222/duckgpt
+    description: "Ask questions, let GPT do the SQL."
+    license: "MPL-2.0"
+    dependencies:
+      - name: duckdb
